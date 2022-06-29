@@ -1,8 +1,11 @@
-const path = require('path');
-const test = require('ava');
-const pkg = require('../package.json');
-const createProviderMacro = require('./_with-provider');
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import test from 'ava';
+import createProviderMacro from './_with-provider.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url)));
 const withProvider = createProviderMacro('ava-3.2', '3.15.0');
 
 const validateConfig = (t, provider, config) => {
@@ -81,6 +84,6 @@ test('main() updateGlobs()', withProvider, (t, provider) => {
 	const main = provider.main({config: {rewritePaths: {'src/': 'build/'}, compile: false}});
 	t.snapshot(main.updateGlobs({
 		filePatterns: ['src/test.ts'],
-		ignoredByWatcherPatterns: ['assets/**']
+		ignoredByWatcherPatterns: ['assets/**'],
 	}));
 });
